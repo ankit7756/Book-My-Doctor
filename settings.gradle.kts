@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "35B-CRUD"
+rootProject.name = "Book-My-Doctor"
 include(":app")
  

@@ -1,53 +1,95 @@
 package com.example.book_my_doctor.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.book_my_doctor.R
 import com.example.book_my_doctor.databinding.ActivityForgetPasswordBinding
 import com.example.book_my_doctor.repository.UserRepositoryImpl
 import com.example.book_my_doctor.utils.LoadingUtils
 import com.example.book_my_doctor.viewmodel.UserViewModel
 
 class ForgetPasswordActivity : AppCompatActivity() {
-    lateinit var forgetPasswordBinding: ActivityForgetPasswordBinding
-    lateinit var userViewModel: UserViewModel
-    lateinit var loadingUtils: LoadingUtils
+    private lateinit var binding: ActivityForgetPasswordBinding
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var loadingUtils: LoadingUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        forgetPasswordBinding = ActivityForgetPasswordBinding.inflate(layoutInflater)
-        setContentView(forgetPasswordBinding.root)
 
-        //initializing auth viewmodel
-        var repo = UserRepositoryImpl()
+        binding = ActivityForgetPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        initializeComponents()
+        setupClickListeners()
+    }
+
+    private fun initializeComponents() {
+        val repo = UserRepositoryImpl()
         userViewModel = UserViewModel(repo)
-
-        //initializing loading
         loadingUtils = LoadingUtils(this)
-        forgetPasswordBinding.btnForget.setOnClickListener {
-            loadingUtils.show()
-            var email: String = forgetPasswordBinding.editEmailForget.text.toString()
+    }
 
-            userViewModel.forgetPassword(email) { success, message ->
-                if (success) {
-                    loadingUtils.dismiss()
-                    Toast.makeText(this@ForgetPasswordActivity, message, Toast.LENGTH_LONG).show()
-                    finish()
-                } else {
-                    loadingUtils.dismiss()
-                    Toast.makeText(this@ForgetPasswordActivity, message, Toast.LENGTH_LONG).show()
-
-                }
+    private fun setupClickListeners() {
+        // Reset Password Button Click
+        binding.btnForget.setOnClickListener {
+            if (validateEmail()) {
+                sendResetLink()
             }
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Back to Login Click
+        binding.tvBackToLogin.setOnClickListener {
+            navigateToLogin()
         }
+    }
+
+    private fun validateEmail(): Boolean {
+        val email = binding.editEmailForget.text.toString().trim()
+
+        return when {
+            email.isEmpty() -> {
+                binding.tilEmail.error = "Email is required"
+                false
+            }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                binding.tilEmail.error = "Please enter a valid email"
+                false
+            }
+            else -> {
+                binding.tilEmail.error = null
+                true
+            }
+        }
+    }
+
+    private fun sendResetLink() {
+        loadingUtils.show()
+        val email = binding.editEmailForget.text.toString().trim()
+
+        userViewModel.forgetPassword(email) { success, message ->
+            loadingUtils.dismiss()
+            showToast(message)
+
+            if (success) {
+                // Wait a moment before finishing to let user read the success message
+                binding.root.postDelayed({
+                    navigateToLogin()
+                }, 2000)
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

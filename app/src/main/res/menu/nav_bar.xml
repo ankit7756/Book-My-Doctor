@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menuHome"
-        android:icon="@drawable/baseline_home_24"
-        android:title="Home" />
+        android:id="@+id/menuWishlist"
+        android:icon="@drawable/baseline_favorite_24"
+        android:title="Wishlist" />
 
     <item
-        android:id="@+id/menuCart"
-        android:icon="@drawable/baseline_shopping_cart_24"
-        android:title="Cart" />
+        android:id="@+id/menuAppointments"
+        android:icon="@drawable/baseline_check_circle_24"
+        android:title="My Appointments" />
 
     <item
         android:id="@+id/menuProfile"

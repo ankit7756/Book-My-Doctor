@@ -1,5 +1,7 @@
 package com.example.book_my_doctor.repository
 
+import com.example.book_my_doctor.model.AppointmentModel
+import com.example.book_my_doctor.model.NotificationModel
 import com.example.book_my_doctor.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -12,17 +14,17 @@ import com.google.firebase.database.ValueEventListener
 class UserRepositoryImpl : UserRepository {
 
     var auth: FirebaseAuth = FirebaseAuth.getInstance()
-
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val reference: DatabaseReference = database.reference.child("users")
+    val appointmentsReference: DatabaseReference = database.reference.child("appointments")
+    val notificationsReference: DatabaseReference = database.reference.child("notifications") // Added
 
     override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
-                callback(true, "Login successfull")
+                callback(true, "Login successful")
             } else {
                 callback(false, it.exception?.message.toString())
-
             }
         }
     }
@@ -37,7 +39,6 @@ class UserRepositoryImpl : UserRepository {
                 callback(true, "Register Success", auth.currentUser?.uid.toString())
             } else {
                 callback(false, it.exception?.message.toString(), "")
-
             }
         }
     }
@@ -65,7 +66,6 @@ class UserRepositoryImpl : UserRepository {
                     callback(false, it.exception?.message.toString())
                 }
             }
-
     }
 
     override fun getCurrentUser(): FirebaseUser? {
@@ -79,8 +79,7 @@ class UserRepositoryImpl : UserRepository {
         reference.child(userId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    var model = snapshot.getValue(UserModel::class.java)
-
+                    val model = snapshot.getValue(UserModel::class.java)
                     callback(model, true, "Details fetched successfully")
                 }
             }
@@ -91,28 +90,80 @@ class UserRepositoryImpl : UserRepository {
         })
     }
 
-    override fun logout(callback: (Boolean, String) -> Unit) {
-        try {
-            auth.signOut()
-            callback(true, "Signout successfull")
-        } catch (e: Exception) {
-            callback(false, e.message.toString())
-        }
+    override fun getAppointments(userId: String, callback: (List<AppointmentModel>) -> Unit) {
+        appointmentsReference.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val appointmentList = mutableListOf<AppointmentModel>()
+                    for (child in snapshot.children) {
+                        val appointment = child.getValue(AppointmentModel::class.java)
+                        appointment?.let { appointmentList.add(it) }
+                    }
+                    callback(appointmentList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(emptyList())
+                }
+            })
     }
 
-    override fun editProfile(
-        userId: String,
-        data: MutableMap<String, Any>,
-        callback: (Boolean, String) -> Unit
-    ) {
-        reference.child(userId).updateChildren(data)
-                    .addOnCompleteListener {
-            if (it.isSuccessful) {
-                callback(true, "Profile edited successfully")
-            } else {
-                callback(false, "Unable to edited profile")
+    override fun saveAppointment(appointment: AppointmentModel, callback: (Boolean, String?) -> Unit) {
+        appointmentsReference.child(appointment.appointmentId).setValue(appointment)
+            .addOnSuccessListener { callback(true, "Appointment booked successfully") }
+            .addOnFailureListener { callback(false, it.message) }
+    }
 
-            }
-        }
+    override fun cancelAppointment(appointmentId: String, callback: (Boolean, String?) -> Unit) {
+        appointmentsReference.child(appointmentId).removeValue()
+            .addOnSuccessListener { callback(true, "Appointment cancelled successfully") }
+            .addOnFailureListener { callback(false, it.message) }
+    }
+
+    // Added implementations for notifications
+    override fun saveNotification(notification: NotificationModel, callback: (Boolean, String?) -> Unit) {
+        notificationsReference.child(notification.notificationId).setValue(notification)
+            .addOnSuccessListener { callback(true, "Notification saved") }
+            .addOnFailureListener { callback(false, it.message) }
+    }
+
+    override fun getNotifications(userId: String, callback: (List<NotificationModel>) -> Unit) {
+        notificationsReference.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val notificationList = mutableListOf<NotificationModel>()
+                    for (child in snapshot.children) {
+                        val notification = child.getValue(NotificationModel::class.java)
+                        notification?.let { notificationList.add(it) }
+                    }
+                    callback(notificationList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(emptyList())
+                }
+            })
+    }
+
+    override fun deleteNotification(notificationId: String, callback: (Boolean, String?) -> Unit) {
+        notificationsReference.child(notificationId).removeValue()
+            .addOnSuccessListener { callback(true, "Notification deleted") }
+            .addOnFailureListener { callback(false, it.message) }
+    }
+
+    override fun clearAllNotifications(userId: String, callback: (Boolean, String?) -> Unit) {
+        notificationsReference.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (child in snapshot.children) {
+                        child.ref.removeValue()
+                    }
+                    callback(true, "All notifications cleared")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(false, error.message)
+                }
+            })
     }
 }

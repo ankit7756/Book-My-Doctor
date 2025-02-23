@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">35B-CRUD</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">BookMyDoctor</string>
+    <string name="exceptional_care_n">Exceptional Care\n</string>
+    <string name="exceptional_care_close_to_you_n">Exceptional Care Close To You\n</string>
+    <string name="exceptional_care_n_close_to_you">Exceptional Care\n Close To You</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

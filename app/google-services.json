@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "338201014137",
-    "firebase_url": "https://bookmydoctor-6f767-default-rtdb.firebaseio.com",
-    "project_id": "bookmydoctor-6f767",
-    "storage_bucket": "bookmydoctor-6f767.firebasestorage.app"
+    "project_number": "947339542913",
+    "firebase_url": "https://bookmydoctor-40f45-default-rtdb.firebaseio.com",
+    "project_id": "bookmydoctor-40f45",
+    "storage_bucket": "bookmydoctor-40f45.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:338201014137:android:1c884cac289262ecd389a8",
+        "mobilesdk_app_id": "1:947339542913:android:5aef43dcf5bdc070d36880",
         "android_client_info": {
           "package_name": "com.example.book_my_doctor"
         }
@@ -16,26 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD45ArNTjx-gkDP5Frkl19l5NzuyPQCebY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:338201014137:android:2bf806fe98b3b892d389a8",
-        "android_client_info": {
-          "package_name": "com.example.bookmydoctor"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD45ArNTjx-gkDP5Frkl19l5NzuyPQCebY"
+          "current_key": "AIzaSyBdsP_AN7r6yIbHlQnxT6To214ciXeP_9U"
         }
       ],
       "services": {
