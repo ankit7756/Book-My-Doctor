@@ -50,7 +50,6 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // Logout button
         binding.logout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(requireContext(), MainActivity::class.java).apply {
@@ -65,7 +64,6 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
-        // Back to Home button
         binding.backToHome.setOnClickListener {
             (activity as? HomeActivity)?.showHomeContent()
         }

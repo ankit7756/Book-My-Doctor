@@ -19,7 +19,7 @@ class NotificationAdapter(
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val message: TextView = itemView.findViewById(R.id.notificationMessage)
         val timestamp: TextView = itemView.findViewById(R.id.notificationTimestamp)
-        val btnDelete: ImageView = itemView.findViewById(R.id.btnDeleteNotification) // Added
+        val btnDelete: ImageView = itemView.findViewById(R.id.btnDeleteNotification)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {

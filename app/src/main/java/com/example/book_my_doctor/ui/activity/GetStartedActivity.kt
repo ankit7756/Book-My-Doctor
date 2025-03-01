@@ -15,15 +15,13 @@ class GetStartedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Initialize View Binding
         binding = ActivityGetStartedBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up button click listener
         binding.startBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish() // Optional: Close GetStartedActivity so user can't go back to it
+            finish()
         }
 
         // Handle window insets for edge-to-edge display

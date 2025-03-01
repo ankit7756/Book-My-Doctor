@@ -145,7 +145,7 @@ class EditProfileActivity : AppCompatActivity() {
                             userId = user.uid,
                             message = "Your profile has been successfully updated."
                         )
-                    ) { _, _ -> } // Callback ignored since we don't need feedback here
+                    ) { _, _ -> }
                     navigateToProfile()
                 } else {
                     showToast(message ?: "Failed to update profile")

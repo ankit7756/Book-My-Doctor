@@ -37,7 +37,6 @@ class AppointmentsAdapter(
         holder.dateAndDay.text = appointment.dateAndDay
         holder.timeSlot.text = appointment.timeSlot
 
-        // Map doctor name to image
         when (appointment.doctorName) {
             "Dr. Ankit Sharma" -> holder.doctorImage.setImageResource(R.drawable.doc1)
             "Dr. Binnol Dahal" -> holder.doctorImage.setImageResource(R.drawable.doc2)
